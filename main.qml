@@ -6,13 +6,19 @@ Window {
     visible: true
     width: 640
     height: 480
-    title: qsTr("Hello World")
+    title: qsTr("Google image collector")
 
     MainForm {
         id: myForm
         anchors.fill: parent
+        searchText.placeholderText: qsTr("Enter your keyword to search here")
+
         mouseArea.onClicked: {
-            console.log(qsTr('Clicked on background. Text: "' + textEdit.text + '"'))
+            console.log(qsTr('Clicked on background. Text: "' + searchText.text + '"'))
+        }
+
+        searchText.onAccepted: {
+            myloader.searchFor(searchText.text)
         }
     }
 
@@ -20,7 +26,9 @@ Window {
         id: myloader
         onHereYouGo: {
             console.log(qsTr('Received some data: "' + gReply + '"'))
-            myForm.textEdit.text = gReply
+            myForm.outputText.text = gReply
+
+            console.log('( ' + myForm.outputText.contentWidth + ',' + myForm.outputText.contentHeight + ')')
         }
     }
 }

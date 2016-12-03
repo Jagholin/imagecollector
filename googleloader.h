@@ -12,13 +12,13 @@ public:
 
 protected:
     QNetworkAccessManager* m_googleManager;
-    QNetworkReply* m_reply;
+    //QNetworkReply* m_reply;
 signals:
     void hereYouGo(QString gReply);
 
 public slots:
-
     void onReplyLoaded();
+    void searchFor(QString keyword);
 };
 
 #endif // GOOGLELOADER_H

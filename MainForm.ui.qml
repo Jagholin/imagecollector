@@ -4,42 +4,41 @@ import QtQuick.Controls 2.0
 Rectangle {
     id: rectangle1
     property alias mouseArea: mouseArea
-    property alias textEdit: textField1
 
-    width: 360
-    height: 360
+    width: 600
+    height: 600
+    property alias outputText: outputWindow.text
+    property alias searchText: searchField
 
     MouseArea {
         id: mouseArea
+        anchors.rightMargin: 0
+        anchors.bottomMargin: 0
+        anchors.leftMargin: 0
+        anchors.topMargin: 0
         anchors.fill: parent
-    }
 
-    TextEdit {
-        id: textEdit
-        text: qsTr("Enter some text...")
-        verticalAlignment: Text.AlignVCenter
-        anchors.top: parent.top
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.topMargin: 20
-        Rectangle {
-            anchors.fill: parent
-            anchors.margins: -10
-            color: "transparent"
-            border.width: 1
+        TextField {
+            id: searchField
+            anchors.right: parent.right
+            anchors.rightMargin: 200
+            anchors.left: parent.left
+            anchors.leftMargin: 200
+            anchors.top: parent.top
+            anchors.topMargin: 13
+        }
+
+        ScrollableTextField {
+            id: outputWindow
+            anchors.right: parent.right
+            anchors.rightMargin: 8
+            anchors.left: parent.left
+            anchors.leftMargin: 8
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 8
+            anchors.top: parent.top
+            anchors.topMargin: 59
         }
     }
 
-    TextField {
-        id: textField1
-        text: qsTr("Text Field")
-        horizontalAlignment: Text.AlignLeft
-        anchors.right: parent.right
-        anchors.rightMargin: 8
-        anchors.left: parent.left
-        anchors.leftMargin: 8
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 8
-        anchors.top: parent.top
-        anchors.topMargin: 48
-    }
 }
