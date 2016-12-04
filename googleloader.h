@@ -14,11 +14,11 @@ protected:
     QNetworkAccessManager* m_googleManager;
     //QNetworkReply* m_reply;
 signals:
-    void hereYouGo(QString gReply);
+    void newPictureUrl(QString pictureUrl);
 
 public slots:
     void onReplyLoaded();
-    void searchFor(QString keyword);
+    void searchFor(QString keyword, QString engineId, QString apiKey);
 };
 
 #endif // GOOGLELOADER_H

@@ -5,6 +5,9 @@
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
+    app.setOrganizationDomain("https://github.com/Jagholin");
+    app.setOrganizationName("Jagholin");
+    app.setApplicationName("ImageLoader");
 
     QQmlApplicationEngine engine;
     qmlRegisterType<GoogleLoader>("app.types", 1, 0, "GoogleLoader");

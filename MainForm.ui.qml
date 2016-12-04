@@ -7,6 +7,7 @@ Rectangle {
 
     width: 600
     height: 600
+    property alias settingsBtn: settingsBtn
     property alias outputText: outputWindow.text
     property alias searchText: searchField
 
@@ -20,10 +21,11 @@ Rectangle {
 
         TextField {
             id: searchField
-            anchors.right: parent.right
-            anchors.rightMargin: 200
+            height: 40
             anchors.left: parent.left
-            anchors.leftMargin: 200
+            anchors.leftMargin: 32
+            anchors.right: parent.right
+            anchors.rightMargin: 114
             anchors.top: parent.top
             anchors.topMargin: 13
         }
@@ -38,6 +40,16 @@ Rectangle {
             anchors.bottomMargin: 8
             anchors.top: parent.top
             anchors.topMargin: 59
+        }
+
+        Button {
+            id: settingsBtn
+            x: 492
+            text: qsTr("Settings")
+            anchors.top: parent.top
+            anchors.topMargin: 13
+            anchors.right: parent.right
+            anchors.rightMargin: 8
         }
     }
 

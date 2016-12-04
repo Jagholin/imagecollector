@@ -1,5 +1,8 @@
 import QtQuick 2.7
 import QtQuick.Window 2.2
+import QtQuick.Layouts 1.3
+import QtQuick.Controls 2.0
+import Qt.labs.settings 1.0
 import app.types 1.0
 
 Window {
@@ -8,25 +11,89 @@ Window {
     height: 480
     title: qsTr("Google image collector")
 
-    MainForm {
-        id: myForm
-        anchors.fill: parent
-        searchText.placeholderText: qsTr("Enter your keyword to search here")
+    Settings {
+        id: appSettings
+        property string searchEngineId: ""
+        property string apiKey: ""
+    }
 
-        mouseArea.onClicked: {
-            console.log(qsTr('Clicked on background. Text: "' + searchText.text + '"'))
+    StackLayout {
+        id: mainWindowLayout
+        anchors.fill:parent
+        currentIndex: 0
+
+        MainForm {
+            id: myForm
+            //anchors.fill: parent
+            searchText.placeholderText: qsTr("Enter your keyword to search here")
+
+            mouseArea.onClicked: {
+                console.log(qsTr('Clicked on background. Text: "' + searchText.text + '"'))
+            }
+
+            searchText.onAccepted: {
+                myloader.searchFor(searchText.text, appSettings.searchEngineId, appSettings.apiKey)
+            }
+
+            settingsBtn.onClicked: {
+                mainWindowLayout.currentIndex = 1
+            }
         }
 
-        searchText.onAccepted: {
-            myloader.searchFor(searchText.text)
+        Rectangle {
+            border.color: "black"
+            border.width: 1
+            color: "lightgreen"
+
+            ColumnLayout {
+                anchors.fill: parent
+                anchors.margins: 5
+
+                GridLayout {
+                    columns: 2
+                    Layout.alignment: Qt.AlignTop
+
+                    Label {
+                        text: qsTr("Custom search machine id:")
+                    }
+
+                    TextField {
+                        id: searchMachineId
+                        text: appSettings.searchEngineId
+                        placeholderText: "your search id"
+                    }
+
+                    Label {
+                        text: qsTr("Google API key:")
+                    }
+
+                    TextField {
+                        id: googleApiKey
+                        text: appSettings.apiKey
+                        placeholderText: "Your Google API Key"
+                    }
+                }
+
+                Button {
+                    Layout.alignment: Qt.AlignTop
+                    text: qsTr("OK")
+                    onClicked: {
+                        appSettings.searchEngineId = searchMachineId.text
+                        appSettings.apiKey = googleApiKey.text
+                        mainWindowLayout.currentIndex = 0
+                    }
+                }
+            }
+
         }
     }
 
+
     GoogleLoader {
         id: myloader
-        onHereYouGo: {
-            console.log(qsTr('Received some data: "' + gReply + '"'))
-            myForm.outputText.text = gReply
+        onNewPictureUrl: {
+            console.log(qsTr('Received some data: "' + pictureUrl + '"'))
+            myForm.outputText.text += pictureUrl + "\n"
 
             console.log('( ' + myForm.outputText.contentWidth + ',' + myForm.outputText.contentHeight + ')')
         }

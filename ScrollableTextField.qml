@@ -10,6 +10,7 @@ Rectangle {
 
     Flickable {
         anchors.fill: parent
+        flickableDirection: Flickable.HorizontalAndVerticalFlick
 
         leftMargin: 2
         rightMargin: 2
@@ -18,18 +19,20 @@ Rectangle {
 
         clip: true
 
-        contentWidth: myTextField.width
-        contentHeight: myTextField.height
+        contentWidth: myTextField.contentWidth
+        contentHeight: myTextField.contentHeight
 
         ScrollBar.vertical: ScrollBar {
+
+        }
+
+        ScrollBar.horizontal: ScrollBar {
 
         }
 
         Text {
             id: myTextField
             text: qsTr("text")
-
-            width: parent.width
 
             wrapMode: Text.WordWrap
         }
