@@ -3,5 +3,7 @@
         <file>main.qml</file>
         <file>MainForm.ui.qml</file>
         <file>ScrollableTextField.qml</file>
+        <file>AnimatedLayout.qml</file>
+        <file>AnimatedLayoutItem.qml</file>
     </qresource>
 </RCC>

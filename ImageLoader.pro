@@ -4,7 +4,9 @@ QT += qml quick network
 CONFIG += c++11
 
 SOURCES += main.cpp \
-    googleloader.cpp
+    googleloader.cpp \
+    imagelistmodel.cpp \
+    googleimageprovider.cpp
 
 RESOURCES += qml.qrc
 
@@ -17,4 +19,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    googleloader.h
+    googleloader.h \
+    imagelistmodel.h \
+    googleimageprovider.h

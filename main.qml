@@ -6,6 +6,7 @@ import Qt.labs.settings 1.0
 import app.types 1.0
 
 Window {
+    id: mainWindow
     visible: true
     width: 640
     height: 480
@@ -17,14 +18,17 @@ Window {
         property string apiKey: ""
     }
 
-    StackLayout {
+    AnimatedLayout {
         id: mainWindowLayout
         anchors.fill:parent
-        currentIndex: 0
+        //currentIndex: 0
 
         MainForm {
+            objectName: "aForm"
             id: myForm
             //anchors.fill: parent
+            width: mainWindow.width
+            height: mainWindow.height
             searchText.placeholderText: qsTr("Enter your keyword to search here")
 
             mouseArea.onClicked: {
@@ -41,6 +45,7 @@ Window {
         }
 
         Rectangle {
+            objectName: "aRectangle"
             border.color: "black"
             border.width: 1
             color: "lightgreen"
