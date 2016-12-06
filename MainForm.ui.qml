@@ -7,8 +7,9 @@ Rectangle {
 
     width: 600
     height: 600
+    property alias model: listView.model
+    property alias delegate: listView.delegate
     property alias settingsBtn: settingsBtn
-    property alias outputText: outputWindow.text
     property alias searchText: searchField
 
     MouseArea {
@@ -30,18 +31,6 @@ Rectangle {
             anchors.topMargin: 13
         }
 
-        ScrollableTextField {
-            id: outputWindow
-            anchors.right: parent.right
-            anchors.rightMargin: 8
-            anchors.left: parent.left
-            anchors.leftMargin: 8
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 8
-            anchors.top: parent.top
-            anchors.topMargin: 59
-        }
-
         Button {
             id: settingsBtn
             x: 492
@@ -50,6 +39,60 @@ Rectangle {
             anchors.topMargin: 13
             anchors.right: parent.right
             anchors.rightMargin: 8
+        }
+
+        ListView {
+            id: listView
+            orientation: ListView.Horizontal
+            anchors.right: parent.right
+            anchors.rightMargin: 8
+            anchors.left: parent.left
+            anchors.leftMargin: 8
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 8
+            anchors.top: parent.top
+            anchors.topMargin: 59
+            model: ListModel {
+                ListElement {
+                    name: "Grey"
+                    colorCode: "grey"
+                }
+
+                ListElement {
+                    name: "Red"
+                    colorCode: "red"
+                }
+
+                ListElement {
+                    name: "Blue"
+                    colorCode: "blue"
+                }
+
+                ListElement {
+                    name: "Green"
+                    colorCode: "green"
+                }
+            }
+            delegate: Item {
+                x: 5
+                width: 80
+                height: 40
+                Row {
+                    id: row1
+                    Rectangle {
+                        width: 40
+                        height: 40
+                        color: colorCode
+                    }
+
+                    Text {
+                        text: name
+                        anchors.verticalCenter: parent.verticalCenter
+                        font.bold: true
+                    }
+                    spacing: 10
+                }
+            }
         }
     }
 

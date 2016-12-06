@@ -42,6 +42,14 @@ Window {
             settingsBtn.onClicked: {
                 mainWindowLayout.currentIndex = 1
             }
+
+            model: imageListModel
+            delegate: Item {
+                Image {
+                    asynchronous: true
+                    source: "image://gloader/" + index.toString()
+                }
+            }
         }
 
         Rectangle {
@@ -98,9 +106,9 @@ Window {
         id: myloader
         onNewPictureUrl: {
             console.log(qsTr('Received some data: "' + pictureUrl + '"'))
-            myForm.outputText.text += pictureUrl + "\n"
+            //myForm.outputText.text += pictureUrl + "\n"
 
-            console.log('( ' + myForm.outputText.contentWidth + ',' + myForm.outputText.contentHeight + ')')
+            imageListModel.addNewImageData(pictureUrl, myForm.searchText.text)
         }
     }
 }

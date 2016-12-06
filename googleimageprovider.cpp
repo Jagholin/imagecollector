@@ -2,35 +2,48 @@
 #include "imagelistmodel.h"
 #include <QtNetwork>
 
+AsyncImageResponse::AsyncImageResponse(QNetworkRequest req, QSize const& reqSize, ImageListModel* imageList, int index)
+{
+    m_reply = m_imageLoader.get(req);
+    m_requestedSize = reqSize;
+    m_imageList = imageList;
+    m_index = index;
+
+    qDebug() << "Waiting for image request";
+
+    connect(m_reply, &QNetworkReply::finished, this, &AsyncImageResponse::onResponseFinished);
+}
+
+void AsyncImageResponse::onResponseFinished()
+{
+    QByteArray myImageData = m_reply->readAll();
+
+    m_resultImage = QImage::fromData(myImageData);
+    //*size = resultImage.size();
+
+    qDebug() << "Image loaded";
+    m_imageList->setImageAtIndex(m_index, m_resultImage);
+    if (m_requestedSize.isValid())
+    {
+        m_resultImage = m_resultImage.scaled(m_requestedSize);
+    }
+    //return resultImage;
+    emit finished();
+}
+
+QQuickTextureFactory *AsyncImageResponse::textureFactory() const
+{
+    return QQuickTextureFactory::textureFactoryForImage(m_resultImage);
+}
+
 GoogleImageProvider::GoogleImageProvider(ImageListModel* imageList):
-    m_imageList(imageList), QQuickImageProvider(QQmlImageProviderBase::Image)
+    m_imageList(imageList)
 {
 }
 
-QQmlImageProviderBase::ImageType GoogleImageProvider::imageType() const
-{
-    return QQmlImageProviderBase::Image;
-}
-
-QImage GoogleImageProvider::requestImage(const QString &id, QSize *size, const QSize &requestedSize)
+QQuickImageResponse* GoogleImageProvider::requestImageResponse(const QString &id, const QSize &requestedSize)
 {
     QNetworkRequest myRequest(QUrl(m_imageList->getImageAddress(id.toInt())));
-    QNetworkReply* myReply = m_imageLoader.get(myRequest);
-    QByteArray myImageData;
-    while (!myReply->isFinished())
-    {
-        if (! myReply->waitForReadyRead(-1))
-            return QImage();
-        myImageData += myReply->readAll();
-    }
-    Q_ASSERT(myReply->isFinished() && myReply->bytesAvailable() == 0);
-    QImage resultImage = QImage::fromData(myImageData);
-    *size = resultImage.size();
 
-    m_imageList->setImageAtIndex(id.toInt(), resultImage);
-    if (requestedSize.isValid())
-    {
-        return resultImage.scaled(requestedSize);
-    }
-    return resultImage;
+    return new AsyncImageResponse(myRequest, requestedSize, m_imageList, id.toInt());
 }
