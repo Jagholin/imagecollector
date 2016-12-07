@@ -44,8 +44,18 @@ Window {
             }
 
             model: imageListModel
-            delegate: Item {
+            delegate: Rectangle {
+                id: delegItem
+
+                height: Math.max(delegImage.height, 300)
+                width: Math.max(delegImage.width, 300)
+
+                border.width: 1
+                color: "lightBlue"
+
                 Image {
+                    id: delegImage
+                    cache: true
                     asynchronous: true
                     source: "image://gloader/" + index.toString()
                 }

@@ -4,6 +4,7 @@
 #include <QQuickImageResponse>
 #include <QQuickAsyncImageProvider>
 #include <QNetworkAccessManager>
+#include <QNetworkRequest>
 
 class ImageListModel;
 
@@ -17,14 +18,23 @@ public:
     QQuickTextureFactory *textureFactory() const override;
 
 public slots:
+    void onImageModelReply(QImage, int);
     void onResponseFinished();
+
+signals:
+    void requestImageAtIndex(int idx, int responseid);
 
 protected:
     QNetworkAccessManager m_imageLoader;
+    QNetworkRequest m_request;
     QNetworkReply* m_reply;
     QSize m_requestedSize;
     ImageListModel* m_imageList;
     QImage m_resultImage;
+
+    QThread* m_threadOwner;
+    int m_imageResponseId;
+    static QAtomicInt s_objectCounter;
     int m_index;
 };
 

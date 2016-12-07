@@ -46,6 +46,11 @@ void ImageListModel::setImageAtIndex(unsigned int index, const QImage &image)
     emit dataChanged(createIndex(index, 0), createIndex(index, 0));
 }
 
+void ImageListModel::imageAtIndex(unsigned int index, int responseid) const
+{
+    emit imageReply(m_imageData[index].imageData, responseid);
+}
+
 QString ImageListModel::getImageAddress(unsigned int index)
 {
     return m_imageData[index].imageAddress;

@@ -1,21 +1,55 @@
 #include "googleimageprovider.h"
 #include "imagelistmodel.h"
 #include <QtNetwork>
+#include <functional>
+
+QAtomicInt AsyncImageResponse::s_objectCounter = 0;
 
 AsyncImageResponse::AsyncImageResponse(QNetworkRequest req, QSize const& reqSize, ImageListModel* imageList, int index)
 {
-    m_reply = m_imageLoader.get(req);
-    m_requestedSize = reqSize;
+    m_imageResponseId = s_objectCounter.fetchAndAddRelaxed(1);
+    qDebug() << "async image response created id = " << m_imageResponseId;
+
+    connect(this, &AsyncImageResponse::requestImageAtIndex, imageList, &ImageListModel::imageAtIndex, Qt::QueuedConnection);
+    connect(imageList, &ImageListModel::imageReply, this, &AsyncImageResponse::onImageModelReply);
+    m_threadOwner = QThread::currentThread();
+    m_request = req;
     m_imageList = imageList;
     m_index = index;
+    m_requestedSize = reqSize;
+    emit requestImageAtIndex(index, m_imageResponseId);
+}
 
-    qDebug() << "Waiting for image request";
+void AsyncImageResponse::onImageModelReply(QImage img, int imageResponseId)
+{
+    if (imageResponseId != m_imageResponseId)
+        return;
 
-    connect(m_reply, &QNetworkReply::finished, this, &AsyncImageResponse::onResponseFinished);
+    qDebug() << "async image response id " << imageResponseId << " entry";
+
+    Q_ASSERT(QThread::currentThread() == m_threadOwner);
+    disconnect(m_imageList, &ImageListModel::imageReply, this, 0);
+    if (! img.isNull())
+    {
+        m_resultImage = img;
+        m_reply = nullptr;
+        qDebug() << "fetching previous image";
+        emit finished();
+    }
+    else
+    {
+        m_reply = m_imageLoader.get(m_request);
+        qDebug() << "Waiting for image request";
+        connect(m_reply, &QNetworkReply::finished, this, &AsyncImageResponse::onResponseFinished);
+    }
 }
 
 void AsyncImageResponse::onResponseFinished()
 {
+    qDebug() << "on responsefinished id " << m_imageResponseId << "entry";
+
+    Q_ASSERT(QThread::currentThread() == m_threadOwner);
+    Q_ASSERT(m_reply);
     QByteArray myImageData = m_reply->readAll();
 
     m_resultImage = QImage::fromData(myImageData);
@@ -28,11 +62,14 @@ void AsyncImageResponse::onResponseFinished()
         m_resultImage = m_resultImage.scaled(m_requestedSize);
     }
     //return resultImage;
+    m_reply->deleteLater();
+    m_reply = nullptr;
     emit finished();
 }
 
 QQuickTextureFactory *AsyncImageResponse::textureFactory() const
 {
+    Q_ASSERT(QThread::currentThread() == m_threadOwner);
     return QQuickTextureFactory::textureFactoryForImage(m_resultImage);
 }
 

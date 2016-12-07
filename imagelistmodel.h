@@ -39,11 +39,15 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
     // Functions used by ImageProvider
-    void setImageAtIndex(unsigned int index, QImage const& image);
     QString getImageAddress(unsigned int index);
 
 public slots:
     int addNewImageData(QString imageAddress, QString keyword);
+    void setImageAtIndex(unsigned int index, QImage const& image);
+    void imageAtIndex(unsigned int index, int responseid) const;
+
+signals:
+    void imageReply(QImage img, int responseid) const;
 
 private:
     QVector<ImageMetaData> m_imageData;
